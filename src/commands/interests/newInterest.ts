@@ -1,43 +1,46 @@
-import { Message } from 'discord.js';
-import { formatChannelName, isCommand } from '../../constants/constants';
-import { onCommand } from '../../index';
+import { Message, TextChannel } from 'discord.js';
+import { categories, channels } from '../../constants/all';
+import { sendNewInterestMessage } from '../../utils/messaging';
 
-onCommand('new-interest', 1, async (message, args)=> {
-  // make a new text channel with the name of whatever is passed in, and put the author in the channel
-  console.log('in new interest');
-  const name = args[1];
+const handleNewInterestCommand = async (message: Message, args: string[]) => {
+  // get the interest name and interests category
+  const interestName = args[0];
+  const category = message.guild?.channels.cache.find(
+    (cat) => cat.name === categories.INTERESTS_CATEGORY,
+  );
+
+  // create the new channel in the interests category, with only the new user
+  let newChannel: TextChannel | undefined;
   try {
-    await message.guild?.channels.create(name, { parent: formatChannelName('interests') });
-    message.reply('Interest created!');
+    newChannel = await message.guild?.channels.create(interestName, {
+      type: 'text',
+      parent: category?.id,
+      permissionOverwrites: [
+        { id: message.guild.id, deny: ['VIEW_CHANNEL'] },
+        { id: message.author.id, allow: ['VIEW_CHANNEL'] },
+      ],
+    });
+
+    if (!newChannel) throw Error('the new channel is undefined');
   } catch (err) {
-    message.reply('Error in creating the interest :(');
+    message.reply(`Error in creating the interest :( ${err}`);
+    return;
   }
-});
 
+  try {
+    // add the new interest to the #join-interests-here channel, so anyone can join it
+    await sendNewInterestMessage(newChannel);
 
+    // send success messages
+    newChannel.send(`${message.author} channel was created!`);
+    message.reply('interest created!');
+  } catch (err) {
+    // send fail message
+    message.reply(
+      `was able to create the interest, but couldn't add a join-message to the
+      #${channels.JOIN_INTERESTS} channel :( ask Amit to take a look at what happened, error: ${err}`,
+    );
+  }
+};
 
-// client.on('message', async (message) => {
-//   // check correct arguments
-//   if (!isCommand(message, 'new-interest')) return;
-
-//   const splitMessage = message.content.split(" ");
-//   if (splitMessage.length != 2) {
-//     if (splitMessage.length > 2) {
-//       message.reply(
-//         'No spaces can be in channel names. Use dashes instead: channel-name-example'
-//       );
-//     } else {
-//       message.reply('Missing new interest name.');
-//     }
-//     return;
-//   }
-  
-//   // make a new text channel with the name of whatever is passed in, and put the author in the channel
-//   const name = splitMessage[1];
-//   try {
-//     await message.guild?.channels.create(name, { parent: formatChannelName('interests') });
-//     message.reply('Interest created!');
-//   } catch (err) {
-//     message.reply('Error in creating the interest :(');
-//   }
-// });
+export default handleNewInterestCommand;

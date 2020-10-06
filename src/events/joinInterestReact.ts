@@ -1,5 +1,5 @@
 import { MessageReaction, TextChannel, User } from 'discord.js';
-import { welcomeNewMember } from '../constants/constants';
+import { sendWelcomeMessage } from '../utils/messaging';
 
 const joinInterestReact = async (reaction: MessageReaction, user: User) => {
   const { message } = reaction;
@@ -18,7 +18,7 @@ const joinInterestReact = async (reaction: MessageReaction, user: User) => {
 
     // give user read access and send a welcome message
     await channel.updateOverwrite(user, { VIEW_CHANNEL: true });
-    welcomeNewMember(channel, user);
+    sendWelcomeMessage(channel, user);
   } catch (err) {
     console.log(`Couldn't handle the react: ${err}`);
   }
