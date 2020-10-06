@@ -28,4 +28,7 @@ export const sendNewInterestMessage = async (channel: TextChannel) => {
 };
 
 export const sendWelcomeMessage = (channel: TextChannel, user: User) =>
-  channel.send(`${user} just joined! Welcome!`);
+  channel.send(`${user} just joined, welcome!`);
+
+export const sendGoodbyeMessage = (channel: TextChannel, user: User) =>
+  channel.send(`${user} became uninterested in ${channel} and left.`);

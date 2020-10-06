@@ -4,6 +4,8 @@ import { channels } from './constants/all';
 import { onCommand } from './utils/all';
 import joinInterestReact from './events/joinInterestReact';
 import handleNewInterestCommand from './commands/interests/newInterest';
+import { getComplete } from './utils/customMiddleware';
+import leaveInterestReact from './events/leaveInterestReact';
 
 dotenv.config();
 
@@ -20,41 +22,45 @@ onCommand(client, 'new-interest', 1, handleNewInterestCommand);
 client.on(
   'messageReactionAdd',
   async (potentialPartialReaction, potentialPartialUser) => {
-    // get the full reaction if needed
-    let reaction: MessageReaction;
-    if (potentialPartialReaction.partial) {
-      try {
-        reaction = await potentialPartialReaction.fetch();
-      } catch (err) {
-        console.error(`Error fetching the reaction: ${err}`);
-        return;
-      }
-    } else {
-      reaction = <MessageReaction>potentialPartialReaction;
-    }
-
-    // get the full user if needed
-    let user: User;
-    if (potentialPartialUser.partial) {
-      try {
-        user = await potentialPartialUser.fetch();
-      } catch (err) {
-        console.error(`Error while fetching the reaction: ${err}`);
-        return;
-      }
-    } else {
-      user = <User>potentialPartialUser;
-    }
-
-    const { message } = reaction;
+    // get the full reaction/user
+    const reaction = <MessageReaction>(
+      await getComplete(potentialPartialReaction)
+    );
+    const user = <User>await getComplete(potentialPartialUser);
 
     // only handle text channels and non-bot reacts
-    if (message.channel.type !== 'text' || user.id === client.user?.id) return;
+    if (reaction.message.channel.type !== 'text' || user.id === client.user?.id)
+      return;
 
     // handle the reaction depending on which channel it was in
-    switch (message.channel.name) {
+    switch (reaction.message.channel.name) {
       case channels.JOIN_INTERESTS:
         joinInterestReact(reaction, user);
+        break;
+    }
+  },
+);
+
+/**
+ * Handle unreacts to messages
+ */
+client.on(
+  'messageReactionRemove',
+  async (potentialPartialReaction, potentialPartialUser) => {
+    // get the full reaction/user
+    const reaction = <MessageReaction>(
+      await getComplete(potentialPartialReaction)
+    );
+    const user = <User>await getComplete(potentialPartialUser);
+
+    // only handle text channels and non-bot reacts
+    if (reaction.message.channel.type !== 'text' || user.id === client.user?.id)
+      return;
+
+    // handle the reaction depending on which channel it was in
+    switch (reaction.message.channel.name) {
+      case channels.JOIN_INTERESTS:
+        leaveInterestReact(reaction, user);
         break;
     }
   },
