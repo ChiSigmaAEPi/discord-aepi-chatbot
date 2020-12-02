@@ -1,12 +1,12 @@
 import { Message, TextChannel } from 'discord.js';
-import { categories, channels } from '../../constants/all';
+import { Categories, Channels } from '../../constants/all';
 import { sendNewInterestMessage } from '../../utils/messaging';
 
 const handleNewInterestCommand = async (message: Message, args: string[]) => {
   // get the interest name and interests category
   const interestName = args[0];
   const category = message.guild?.channels.cache.find(
-    (cat) => cat.name === categories.INTERESTS_CATEGORY,
+    (cat) => cat.name === Categories.InterestsCategory,
   );
 
   // create the new channel in the interests category, with only the new user
@@ -38,7 +38,7 @@ const handleNewInterestCommand = async (message: Message, args: string[]) => {
     // send fail message
     message.reply(
       `was able to create the interest, but couldn't add a join-message to the
-      #${channels.JOIN_INTERESTS} channel :( ask Amit to take a look at what happened, error: ${err}`,
+      #${Channels.JoinInterest} channel :( ask Amit to take a look at what happened, error: ${err}`,
     );
   }
 };

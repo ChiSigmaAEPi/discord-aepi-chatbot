@@ -1,4 +1,3 @@
-import categories from './categoryNames';
-import channels from './channelNames';
-
-export { categories, channels };
+export * from './categoryNames';
+export * from './channelNames';
+export * from './indicators';

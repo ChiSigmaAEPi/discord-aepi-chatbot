@@ -1,5 +1,5 @@
 import { TextChannel, User } from 'discord.js';
-import { channels } from '../constants/all';
+import { Channels } from '../constants/all';
 
 /**
  * Send a message to the #join-interests-here channel, returning the sent message.
@@ -8,11 +8,9 @@ import { channels } from '../constants/all';
  */
 export const sendNewInterestMessage = async (channel: TextChannel) => {
   // find the join interests here channel
-  const joinInterestsChannel = <TextChannel | null>(
-    channel.guild?.channels.cache.find(
-      (ch) => ch.name === channels.JOIN_INTERESTS && ch.type === 'text',
-    )
-  );
+  const joinInterestsChannel = channel.guild?.channels.cache.find(
+    (ch) => ch.name === Channels.JoinInterest && ch.type === 'text',
+  ) as TextChannel | undefined;
 
   // handle null channel (probably a not founded channel)
   if (!joinInterestsChannel) {

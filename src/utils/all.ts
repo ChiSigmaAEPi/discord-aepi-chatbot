@@ -1,4 +1,3 @@
-import { sendWelcomeMessage, sendGoodbyeMessage } from './messaging';
-import { onCommand } from './customMiddleware';
-
-export { sendWelcomeMessage, sendGoodbyeMessage, onCommand };
+export * from './messaging';
+export * from './customMiddleware';
+export * from './formatting';

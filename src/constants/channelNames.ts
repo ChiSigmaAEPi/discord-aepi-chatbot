@@ -1,8 +1,9 @@
 /**
  * Channels
  */
-const JOIN_INTERESTS = 'join-interests-here';
+enum Channels {
+  JoinInterest = 'join-interests-here',
+  ReadMeFirst = '🚨read-me-first-bitches🚨',
+}
 
-export default {
-  JOIN_INTERESTS,
-};
+export { Channels };

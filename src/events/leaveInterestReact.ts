@@ -1,22 +1,20 @@
 import { MessageReaction, TextChannel, User } from 'discord.js';
+import { Indicator } from '../constants/all';
 import { sendGoodbyeMessage } from '../utils/all';
 
 const leaveInterestReact = async (reaction: MessageReaction, user: User) => {
   const { message } = reaction;
 
   // get the interest channel
-  const channelString = message.content.split('**')[1];
+  const channelString = message.content.split(Indicator.Bold)[1];
 
-  // get channel
+  // get channel, remove user read access, and send a left message
   try {
-    const channel = <TextChannel | undefined>(
-      message.guild?.channels.cache.find(
-        (ch) => ch.toString() === channelString && ch.type === 'text',
-      )
-    );
+    const channel = message.guild?.channels.cache.find(
+      (ch) => ch.toString() === channelString && ch.type === 'text',
+    ) as TextChannel | undefined;
     if (!channel) throw Error('channel is undefined');
 
-    // take away user's read access and send a 'left' message
     await channel.updateOverwrite(user, { VIEW_CHANNEL: false });
     sendGoodbyeMessage(channel, user);
   } catch (err) {

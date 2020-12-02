@@ -1,10 +1,10 @@
 /**
  * Categories
  */
-export const formatCategoryName = (name: string) => `║╶╴${name}╶╴║`;
+const formatCategoryName = (name: string) => `║╶╴${name}╶╴║`;
 
-const INTERESTS_CATEGORY = formatCategoryName('interests');
-
-export default {
-  INTERESTS_CATEGORY,
+const Categories = {
+  InterestsCategory: formatCategoryName('interests'),
 };
+
+export { formatCategoryName, Categories };
