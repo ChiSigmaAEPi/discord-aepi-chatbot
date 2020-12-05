@@ -1,5 +1,5 @@
-import dotenv from 'dotenv';
-import { ChannelData, Client, MessageReaction, User } from 'discord.js';
+import { config } from 'dotenv';
+import { Client, MessageReaction, User } from 'discord.js';
 import { Channels } from './constants/all';
 import { onCommand } from './utils/all';
 import joinInterestReact from './events/joinInterestReact';
@@ -9,7 +9,7 @@ import leaveInterestReact from './events/leaveInterestReact';
 import readMeFirstJoinReaction from './events/readMeFirstJoinReaction';
 import readMeFirstLeaveReaction from './events/readMeFirstLeaveReaction';
 
-dotenv.config();
+config();
 
 const client = new Client({
   partials: ['MESSAGE', 'CHANNEL', 'USER', 'REACTION'], // need partials to handle uncached messages' reactions
