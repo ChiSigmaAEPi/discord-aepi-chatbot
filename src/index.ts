@@ -86,4 +86,7 @@ client
   .then(() => {
     console.log('Successfully logged in!');
   })
-  .catch((err) => console.log(`Error while logging in: ${err}`));
+  .catch((err) => {
+    console.log(`Error while logging in: ${err}`);
+    throw err;
+  });
