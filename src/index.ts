@@ -13,10 +13,6 @@ dotenv.config();
 
 const client = new Client({ partials: ['MESSAGE', 'REACTION'] });
 
-client.on('shardError', (err) => {
-  console.error('A websocket connection encountered an error:', err);
-});
-
 /**
  * Commands go here
  */
