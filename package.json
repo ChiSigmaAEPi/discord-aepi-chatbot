@@ -4,8 +4,9 @@
   "main": "index.js",
   "license": "MIT",
   "scripts": {
-    "start": "ts-node src/index.ts",
-    "build": "tsc && node build/index.js"
+    "start": "node build/index.js",
+    "start:dev": "ts-node src/index.ts",
+    "build": "tsc"
   },
   "dependencies": {
     "@types/node": "^14.11.2",
