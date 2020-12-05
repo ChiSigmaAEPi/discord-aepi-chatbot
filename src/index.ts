@@ -1,5 +1,5 @@
 import dotenv from 'dotenv';
-import { Client, MessageReaction, User } from 'discord.js';
+import { ChannelData, Client, MessageReaction, User } from 'discord.js';
 import { Channels } from './constants/all';
 import { onCommand } from './utils/all';
 import joinInterestReact from './events/joinInterestReact';
@@ -11,7 +11,10 @@ import readMeFirstLeaveReaction from './events/readMeFirstLeaveReaction';
 
 dotenv.config();
 
-const client = new Client({ partials: ['MESSAGE', 'REACTION'] });
+const client = new Client({
+  // fetchAllMembers: true,
+  partials: ['MESSAGE', 'CHANNEL', 'USER', 'REACTION'],
+});
 
 /**
  * Commands go here
@@ -24,17 +27,13 @@ onCommand(client, 'new-interest', 1, handleNewInterestCommand);
 client.on(
   'messageReactionAdd',
   async (potentialPartialReaction, potentialPartialUser) => {
-    // get the full reaction/user
-    const reaction = (await getComplete(
+    const reaction = await getComplete<MessageReaction>(
       potentialPartialReaction,
-    )) as MessageReaction;
-    const user = (await getComplete(potentialPartialUser)) as User;
+    );
+    const user = await getComplete<User>(potentialPartialUser);
 
     // only handle text channels and non-bot reacts
-    if (
-      reaction.message.channel.type !== 'text' ||
-      user.id === client.user?.id
-    ) {
+    if (reaction.message.channel.type !== 'text' || user.bot) {
       return;
     }
 
@@ -57,17 +56,13 @@ client.on(
 client.on(
   'messageReactionRemove',
   async (potentialPartialReaction, potentialPartialUser) => {
-    // get the full reaction/user
-    const reaction = (await getComplete(
+    const reaction = await getComplete<MessageReaction>(
       potentialPartialReaction,
-    )) as MessageReaction;
-    const user = (await getComplete(potentialPartialUser)) as User;
+    );
+    const user = await getComplete<User>(potentialPartialUser);
 
     // only handle text channels and non-bot reacts
-    if (
-      reaction.message.channel.type !== 'text' ||
-      user.id === client.user?.id
-    ) {
+    if (reaction.message.channel.type !== 'text' || user.bot) {
       return;
     }
 

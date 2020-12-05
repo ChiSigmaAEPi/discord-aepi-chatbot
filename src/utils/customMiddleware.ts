@@ -1,4 +1,4 @@
-import { Client, Message, MessageReaction, User } from 'discord.js';
+import { Client, Message } from 'discord.js';
 
 const isCommand = (message: Message, command: string) =>
   message.content.startsWith(`?${command} `) ||
@@ -34,12 +34,13 @@ export const onCommand = (
   });
 };
 
-interface Partial {
+interface Partial<T> {
   partial: boolean;
-  fetch: () => Promise<MessageReaction | User>;
+  fetch: () => Promise<T>;
 }
-export const getComplete = async (potentialPartial: Partial) => {
-  // get the full reaction if needed
+export const getComplete = async <T extends Partial<any>>(
+  potentialPartial: Partial<T>,
+): Promise<T> => {
   try {
     return await potentialPartial.fetch();
   } catch (err) {
